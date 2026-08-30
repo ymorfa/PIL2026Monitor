@@ -1,0 +1,15 @@
+[Unit]
+Description=Monitor de la convocatoria PIL 2026 de SECIHTI
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/RUTA/ABSOLUTA/PLI
+ExecStart=/RUTA/ABSOLUTA/PLI/.venv/bin/python /RUTA/ABSOLUTA/PLI/monitor.py
+Restart=always
+RestartSec=30
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=default.target
