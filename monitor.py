@@ -992,9 +992,12 @@ def configure_logging(level: str) -> None:
     """Configura sólo nuestro logger; urllib3 nunca debe imprimir el token."""
 
     handler = logging.StreamHandler()
-    handler.setFormatter(
-        logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
+    formatter = logging.Formatter(
+        "%(asctime)s | %(levelname)s | %(message)s",
+        datefmt="%Y-%m-%dT%H:%M:%SZ",
     )
+    formatter.converter = time.gmtime
+    handler.setFormatter(formatter)
     LOGGER.handlers.clear()
     LOGGER.addHandler(handler)
     LOGGER.setLevel(getattr(logging, level))

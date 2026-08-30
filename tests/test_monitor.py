@@ -1,6 +1,7 @@
 import logging
 import os
 import tempfile
+import time
 import unittest
 from dataclasses import replace
 from pathlib import Path
@@ -9,6 +10,7 @@ from unittest.mock import Mock, patch
 from monitor import (
     MAX_TELEGRAM_MESSAGE_LENGTH,
     ConfigurationError,
+    LOGGER,
     MonitorError,
     PageValidationError,
     Settings,
@@ -366,6 +368,23 @@ class TelegramTests(unittest.TestCase):
         self.addCleanup(configure_logging, "WARNING")
         self.assertGreaterEqual(
             logging.getLogger("urllib3").getEffectiveLevel(), logging.WARNING
+        )
+
+    def test_logging_uses_iso_8601_utc_timestamp(self):
+        configure_logging("INFO")
+        self.addCleanup(configure_logging, "WARNING")
+        formatter = LOGGER.handlers[0].formatter
+        self.assertIsNotNone(formatter)
+        self.assertIs(formatter.converter, time.gmtime)
+
+        record = logging.LogRecord(
+            "pil_monitor", logging.INFO, __file__, 1, "mensaje", (), None
+        )
+        record.created = 0
+        record.msecs = 0
+        self.assertEqual(
+            formatter.format(record),
+            "1970-01-01T00:00:00Z | INFO | mensaje",
         )
 
 
