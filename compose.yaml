@@ -1,0 +1,17 @@
+services:
+  monitor:
+    build: .
+    container_name: pil2026-monitor
+
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    volumes:
+      - ./.state:/app/.state
+
+    init: true
+
+    security_opt:
+      - no-new-privileges:true
